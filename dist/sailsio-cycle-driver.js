@@ -1458,7 +1458,6 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"base64-js":4,"ieee754":5,"isarray":6}],4:[function(require,module,exports){
 ;(function (exports) {
   'use strict'
@@ -2007,7 +2006,6 @@ AES.prototype._doCryptBlock = function (M, keySchedule, SUB_MIX, SBOX) {
 exports.AES = AES
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],10:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
@@ -2109,7 +2107,6 @@ function xorTest (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./aes":9,"./ghash":14,"buffer":3,"buffer-xor":23,"cipher-base":24,"inherits":201}],11:[function(require,module,exports){
 var ciphers = require('./encrypter')
 exports.createCipher = exports.Cipher = ciphers.createCipher
@@ -2264,7 +2261,6 @@ exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
 }).call(this,require("buffer").Buffer)
-
 },{"./aes":9,"./authCipher":10,"./modes":15,"./modes/cbc":16,"./modes/cfb":17,"./modes/cfb1":18,"./modes/cfb8":19,"./modes/ctr":20,"./modes/ecb":21,"./modes/ofb":22,"./streamCipher":25,"buffer":3,"cipher-base":24,"evp_bytestokey":36,"inherits":201}],13:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
@@ -2391,7 +2387,6 @@ exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
 }).call(this,require("buffer").Buffer)
-
 },{"./aes":9,"./authCipher":10,"./modes":15,"./modes/cbc":16,"./modes/cfb":17,"./modes/cfb1":18,"./modes/cfb8":19,"./modes/ctr":20,"./modes/ecb":21,"./modes/ofb":22,"./streamCipher":25,"buffer":3,"cipher-base":24,"evp_bytestokey":36,"inherits":201}],14:[function(require,module,exports){
 (function (Buffer){
 var zeros = new Buffer(16)
@@ -2494,7 +2489,6 @@ function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],15:[function(require,module,exports){
 exports['aes-128-ecb'] = {
   cipher: 'AES',
@@ -2722,7 +2716,6 @@ function encryptStart (self, data, decrypt) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"buffer-xor":23}],18:[function(require,module,exports){
 (function (Buffer){
 function encryptByte (self, byteParam, decrypt) {
@@ -2761,7 +2754,6 @@ function shiftIn (buffer, value) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],19:[function(require,module,exports){
 (function (Buffer){
 function encryptByte (self, byteParam, decrypt) {
@@ -2781,7 +2773,6 @@ exports.encrypt = function (self, chunk, decrypt) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],20:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
@@ -2817,7 +2808,6 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"buffer-xor":23}],21:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
@@ -2846,7 +2836,6 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"buffer-xor":23}],23:[function(require,module,exports){
 (function (Buffer){
 module.exports = function xor (a, b) {
@@ -2861,7 +2850,6 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],24:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
@@ -2956,7 +2944,6 @@ CipherBase.prototype._toString = function (value, enc, final) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"inherits":201,"stream":223,"string_decoder":230}],25:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
@@ -2986,7 +2973,6 @@ StreamCipher.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./aes":9,"buffer":3,"cipher-base":24,"inherits":201}],26:[function(require,module,exports){
 (function (Buffer){
 var CipherBase = require('cipher-base')
@@ -3034,7 +3020,6 @@ DES.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"cipher-base":28,"des.js":29,"inherits":201}],27:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
@@ -3062,101 +3047,8 @@ exports['des-ede'] = {
 }
 
 },{}],28:[function(require,module,exports){
-(function (Buffer){
-var Transform = require('stream').Transform
-var inherits = require('inherits')
-var StringDecoder = require('string_decoder').StringDecoder
-module.exports = CipherBase
-inherits(CipherBase, Transform)
-function CipherBase (hashMode) {
-  Transform.call(this)
-  this.hashMode = typeof hashMode === 'string'
-  if (this.hashMode) {
-    this[hashMode] = this._finalOrDigest
-  } else {
-    this.final = this._finalOrDigest
-  }
-  this._decoder = null
-  this._encoding = null
-}
-CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
-  if (typeof data === 'string') {
-    data = new Buffer(data, inputEnc)
-  }
-  var outData = this._update(data)
-  if (this.hashMode) {
-    return this
-  }
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc)
-  }
-  return outData
-}
-
-CipherBase.prototype.setAutoPadding = function () {}
-
-CipherBase.prototype.getAuthTag = function () {
-  throw new Error('trying to get auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAuthTag = function () {
-  throw new Error('trying to set auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAAD = function () {
-  throw new Error('trying to set aad in unsupported state')
-}
-
-CipherBase.prototype._transform = function (data, _, next) {
-  var err
-  try {
-    if (this.hashMode) {
-      this._update(data)
-    } else {
-      this.push(this._update(data))
-    }
-  } catch (e) {
-    err = e
-  } finally {
-    next(err)
-  }
-}
-CipherBase.prototype._flush = function (done) {
-  var err
-  try {
-    this.push(this._final())
-  } catch (e) {
-    err = e
-  } finally {
-    done(err)
-  }
-}
-CipherBase.prototype._finalOrDigest = function (outputEnc) {
-  var outData = this._final() || new Buffer('')
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc, true)
-  }
-  return outData
-}
-
-CipherBase.prototype._toString = function (value, enc, final) {
-  if (!this._decoder) {
-    this._decoder = new StringDecoder(enc)
-    this._encoding = enc
-  }
-  if (this._encoding !== enc) {
-    throw new Error('can\'t switch encodings')
-  }
-  var out = this._decoder.write(value)
-  if (final) {
-    out += this._decoder.end()
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"inherits":201,"stream":223,"string_decoder":230}],29:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"buffer":3,"dup":24,"inherits":201,"stream":223,"string_decoder":230}],29:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -3920,7 +3812,6 @@ function EVP_BytesToKey (password, salt, keyLen, ivLen) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"create-hash/md5":133}],37:[function(require,module,exports){
 (function (Buffer){
 'use strict'
@@ -3997,7 +3888,6 @@ exports['RSA-MD5'] = exports.md5WithRSAEncryption = {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],38:[function(require,module,exports){
 (function (Buffer){
 var _algos = require('./algos')
@@ -4105,7 +3995,6 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./algos":37,"./sign":103,"./verify":104,"buffer":3,"create-hash":131,"inherits":201,"stream":223}],39:[function(require,module,exports){
 'use strict'
 exports['1.3.132.0.10'] = 'secp256k1'
@@ -7487,7 +7376,6 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"bn.js":40,"buffer":3,"randombytes":198}],42:[function(require,module,exports){
 'use strict';
 
@@ -12822,7 +12710,6 @@ module.exports = function (okey, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"browserify-aes":87,"buffer":3,"evp_bytestokey":102}],69:[function(require,module,exports){
 (function (Buffer){
 var asn1 = require('./asn1')
@@ -12928,7 +12815,6 @@ function decrypt (data, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./aesid.json":66,"./asn1":67,"./fixProc":68,"browserify-aes":87,"buffer":3,"pbkdf2":152}],70:[function(require,module,exports){
 var asn1 = exports;
 
@@ -14624,1035 +14510,42 @@ PEMEncoder.prototype.encode = function encode(data, options) {
 },{"../../asn1":70,"./der":81,"buffer":3,"inherits":201}],84:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
 },{"dup":35}],85:[function(require,module,exports){
-(function (Buffer){
-// based on the aes implimentation in triple sec
-// https://github.com/keybase/triplesec
-
-// which is in turn based on the one from crypto-js
-// https://code.google.com/p/crypto-js/
-
-var uint_max = Math.pow(2, 32)
-function fixup_uint32 (x) {
-  var ret, x_pos
-  ret = x > uint_max || x < 0 ? (x_pos = Math.abs(x) % uint_max, x < 0 ? uint_max - x_pos : x_pos) : x
-  return ret
-}
-function scrub_vec (v) {
-  for (var i = 0; i < v.length; v++) {
-    v[i] = 0
-  }
-  return false
-}
-
-function Global () {
-  this.SBOX = []
-  this.INV_SBOX = []
-  this.SUB_MIX = [[], [], [], []]
-  this.INV_SUB_MIX = [[], [], [], []]
-  this.init()
-  this.RCON = [0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
-}
-
-Global.prototype.init = function () {
-  var d, i, sx, t, x, x2, x4, x8, xi, _i
-  d = (function () {
-    var _i, _results
-    _results = []
-    for (i = _i = 0; _i < 256; i = ++_i) {
-      if (i < 128) {
-        _results.push(i << 1)
-      } else {
-        _results.push((i << 1) ^ 0x11b)
-      }
-    }
-    return _results
-  })()
-  x = 0
-  xi = 0
-  for (i = _i = 0; _i < 256; i = ++_i) {
-    sx = xi ^ (xi << 1) ^ (xi << 2) ^ (xi << 3) ^ (xi << 4)
-    sx = (sx >>> 8) ^ (sx & 0xff) ^ 0x63
-    this.SBOX[x] = sx
-    this.INV_SBOX[sx] = x
-    x2 = d[x]
-    x4 = d[x2]
-    x8 = d[x4]
-    t = (d[sx] * 0x101) ^ (sx * 0x1010100)
-    this.SUB_MIX[0][x] = (t << 24) | (t >>> 8)
-    this.SUB_MIX[1][x] = (t << 16) | (t >>> 16)
-    this.SUB_MIX[2][x] = (t << 8) | (t >>> 24)
-    this.SUB_MIX[3][x] = t
-    t = (x8 * 0x1010101) ^ (x4 * 0x10001) ^ (x2 * 0x101) ^ (x * 0x1010100)
-    this.INV_SUB_MIX[0][sx] = (t << 24) | (t >>> 8)
-    this.INV_SUB_MIX[1][sx] = (t << 16) | (t >>> 16)
-    this.INV_SUB_MIX[2][sx] = (t << 8) | (t >>> 24)
-    this.INV_SUB_MIX[3][sx] = t
-    if (x === 0) {
-      x = xi = 1
-    } else {
-      x = x2 ^ d[d[d[x8 ^ x2]]]
-      xi ^= d[d[xi]]
-    }
-  }
-  return true
-}
-
-var G = new Global()
-
-AES.blockSize = 4 * 4
-
-AES.prototype.blockSize = AES.blockSize
-
-AES.keySize = 256 / 8
-
-AES.prototype.keySize = AES.keySize
-
-function bufferToArray (buf) {
-  var len = buf.length / 4
-  var out = new Array(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = buf.readUInt32BE(i * 4)
-  }
-  return out
-}
-function AES (key) {
-  this._key = bufferToArray(key)
-  this._doReset()
-}
-
-AES.prototype._doReset = function () {
-  var invKsRow, keySize, keyWords, ksRow, ksRows, t
-  keyWords = this._key
-  keySize = keyWords.length
-  this._nRounds = keySize + 6
-  ksRows = (this._nRounds + 1) * 4
-  this._keySchedule = []
-  for (ksRow = 0; ksRow < ksRows; ksRow++) {
-    this._keySchedule[ksRow] = ksRow < keySize ? keyWords[ksRow] : (t = this._keySchedule[ksRow - 1], (ksRow % keySize) === 0 ? (t = (t << 8) | (t >>> 24), t = (G.SBOX[t >>> 24] << 24) | (G.SBOX[(t >>> 16) & 0xff] << 16) | (G.SBOX[(t >>> 8) & 0xff] << 8) | G.SBOX[t & 0xff], t ^= G.RCON[(ksRow / keySize) | 0] << 24) : keySize > 6 && ksRow % keySize === 4 ? t = (G.SBOX[t >>> 24] << 24) | (G.SBOX[(t >>> 16) & 0xff] << 16) | (G.SBOX[(t >>> 8) & 0xff] << 8) | G.SBOX[t & 0xff] : void 0, this._keySchedule[ksRow - keySize] ^ t)
-  }
-  this._invKeySchedule = []
-  for (invKsRow = 0; invKsRow < ksRows; invKsRow++) {
-    ksRow = ksRows - invKsRow
-    t = this._keySchedule[ksRow - (invKsRow % 4 ? 0 : 4)]
-    this._invKeySchedule[invKsRow] = invKsRow < 4 || ksRow <= 4 ? t : G.INV_SUB_MIX[0][G.SBOX[t >>> 24]] ^ G.INV_SUB_MIX[1][G.SBOX[(t >>> 16) & 0xff]] ^ G.INV_SUB_MIX[2][G.SBOX[(t >>> 8) & 0xff]] ^ G.INV_SUB_MIX[3][G.SBOX[t & 0xff]]
-  }
-  return true
-}
-
-AES.prototype.encryptBlock = function (M) {
-  M = bufferToArray(new Buffer(M))
-  var out = this._doCryptBlock(M, this._keySchedule, G.SUB_MIX, G.SBOX)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[1], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[3], 12)
-  return buf
-}
-
-AES.prototype.decryptBlock = function (M) {
-  M = bufferToArray(new Buffer(M))
-  var temp = [M[3], M[1]]
-  M[1] = temp[0]
-  M[3] = temp[1]
-  var out = this._doCryptBlock(M, this._invKeySchedule, G.INV_SUB_MIX, G.INV_SBOX)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[3], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[1], 12)
-  return buf
-}
-
-AES.prototype.scrub = function () {
-  scrub_vec(this._keySchedule)
-  scrub_vec(this._invKeySchedule)
-  scrub_vec(this._key)
-}
-
-AES.prototype._doCryptBlock = function (M, keySchedule, SUB_MIX, SBOX) {
-  var ksRow, s0, s1, s2, s3, t0, t1, t2, t3
-
-  s0 = M[0] ^ keySchedule[0]
-  s1 = M[1] ^ keySchedule[1]
-  s2 = M[2] ^ keySchedule[2]
-  s3 = M[3] ^ keySchedule[3]
-  ksRow = 4
-  for (var round = 1; round < this._nRounds; round++) {
-    t0 = SUB_MIX[0][s0 >>> 24] ^ SUB_MIX[1][(s1 >>> 16) & 0xff] ^ SUB_MIX[2][(s2 >>> 8) & 0xff] ^ SUB_MIX[3][s3 & 0xff] ^ keySchedule[ksRow++]
-    t1 = SUB_MIX[0][s1 >>> 24] ^ SUB_MIX[1][(s2 >>> 16) & 0xff] ^ SUB_MIX[2][(s3 >>> 8) & 0xff] ^ SUB_MIX[3][s0 & 0xff] ^ keySchedule[ksRow++]
-    t2 = SUB_MIX[0][s2 >>> 24] ^ SUB_MIX[1][(s3 >>> 16) & 0xff] ^ SUB_MIX[2][(s0 >>> 8) & 0xff] ^ SUB_MIX[3][s1 & 0xff] ^ keySchedule[ksRow++]
-    t3 = SUB_MIX[0][s3 >>> 24] ^ SUB_MIX[1][(s0 >>> 16) & 0xff] ^ SUB_MIX[2][(s1 >>> 8) & 0xff] ^ SUB_MIX[3][s2 & 0xff] ^ keySchedule[ksRow++]
-    s0 = t0
-    s1 = t1
-    s2 = t2
-    s3 = t3
-  }
-  t0 = ((SBOX[s0 >>> 24] << 24) | (SBOX[(s1 >>> 16) & 0xff] << 16) | (SBOX[(s2 >>> 8) & 0xff] << 8) | SBOX[s3 & 0xff]) ^ keySchedule[ksRow++]
-  t1 = ((SBOX[s1 >>> 24] << 24) | (SBOX[(s2 >>> 16) & 0xff] << 16) | (SBOX[(s3 >>> 8) & 0xff] << 8) | SBOX[s0 & 0xff]) ^ keySchedule[ksRow++]
-  t2 = ((SBOX[s2 >>> 24] << 24) | (SBOX[(s3 >>> 16) & 0xff] << 16) | (SBOX[(s0 >>> 8) & 0xff] << 8) | SBOX[s1 & 0xff]) ^ keySchedule[ksRow++]
-  t3 = ((SBOX[s3 >>> 24] << 24) | (SBOX[(s0 >>> 16) & 0xff] << 16) | (SBOX[(s1 >>> 8) & 0xff] << 8) | SBOX[s2 & 0xff]) ^ keySchedule[ksRow++]
-  return [
-    fixup_uint32(t0),
-    fixup_uint32(t1),
-    fixup_uint32(t2),
-    fixup_uint32(t3)
-  ]
-}
-
-exports.AES = AES
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],86:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var GHASH = require('./ghash')
-var xor = require('buffer-xor')
-inherits(StreamCipher, Transform)
-module.exports = StreamCipher
-
-function StreamCipher (mode, key, iv, decrypt) {
-  if (!(this instanceof StreamCipher)) {
-    return new StreamCipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._finID = Buffer.concat([iv, new Buffer([0, 0, 0, 1])])
-  iv = Buffer.concat([iv, new Buffer([0, 0, 0, 2])])
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  this._cache = new Buffer('')
-  this._secCache = new Buffer('')
-  this._decrypt = decrypt
-  this._alen = 0
-  this._len = 0
-  iv.copy(this._prev)
-  this._mode = mode
-  var h = new Buffer(4)
-  h.fill(0)
-  this._ghash = new GHASH(this._cipher.encryptBlock(h))
-  this._authTag = null
-  this._called = false
-}
-StreamCipher.prototype._update = function (chunk) {
-  if (!this._called && this._alen) {
-    var rump = 16 - (this._alen % 16)
-    if (rump < 16) {
-      rump = new Buffer(rump)
-      rump.fill(0)
-      this._ghash.update(rump)
-    }
-  }
-  this._called = true
-  var out = this._mode.encrypt(this, chunk)
-  if (this._decrypt) {
-    this._ghash.update(chunk)
-  } else {
-    this._ghash.update(out)
-  }
-  this._len += chunk.length
-  return out
-}
-StreamCipher.prototype._final = function () {
-  if (this._decrypt && !this._authTag) {
-    throw new Error('Unsupported state or unable to authenticate data')
-  }
-  var tag = xor(this._ghash.final(this._alen * 8, this._len * 8), this._cipher.encryptBlock(this._finID))
-  if (this._decrypt) {
-    if (xorTest(tag, this._authTag)) {
-      throw new Error('Unsupported state or unable to authenticate data')
-    }
-  } else {
-    this._authTag = tag
-  }
-  this._cipher.scrub()
-}
-StreamCipher.prototype.getAuthTag = function getAuthTag () {
-  if (!this._decrypt && Buffer.isBuffer(this._authTag)) {
-    return this._authTag
-  } else {
-    throw new Error('Attempting to get auth tag in unsupported state')
-  }
-}
-StreamCipher.prototype.setAuthTag = function setAuthTag (tag) {
-  if (this._decrypt) {
-    this._authTag = tag
-  } else {
-    throw new Error('Attempting to set auth tag in unsupported state')
-  }
-}
-StreamCipher.prototype.setAAD = function setAAD (buf) {
-  if (!this._called) {
-    this._ghash.update(buf)
-    this._alen += buf.length
-  } else {
-    throw new Error('Attempting to set AAD in unsupported state')
-  }
-}
-function xorTest (a, b) {
-  var out = 0
-  if (a.length !== b.length) {
-    out++
-  }
-  var len = Math.min(a.length, b.length)
-  var i = -1
-  while (++i < len) {
-    out += (a[i] ^ b[i])
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":85,"./ghash":90,"buffer":3,"buffer-xor":99,"cipher-base":100,"inherits":201}],87:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"buffer":3,"dup":9}],86:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"./aes":85,"./ghash":90,"buffer":3,"buffer-xor":99,"cipher-base":100,"dup":10,"inherits":201}],87:[function(require,module,exports){
 arguments[4][11][0].apply(exports,arguments)
 },{"./decrypter":88,"./encrypter":89,"./modes":91,"dup":11}],88:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var modes = require('./modes')
-var StreamCipher = require('./streamCipher')
-var AuthCipher = require('./authCipher')
-var ebtk = require('evp_bytestokey')
-
-inherits(Decipher, Transform)
-function Decipher (mode, key, iv) {
-  if (!(this instanceof Decipher)) {
-    return new Decipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cache = new Splitter()
-  this._last = void 0
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  iv.copy(this._prev)
-  this._mode = mode
-  this._autopadding = true
-}
-Decipher.prototype._update = function (data) {
-  this._cache.add(data)
-  var chunk
-  var thing
-  var out = []
-  while ((chunk = this._cache.get(this._autopadding))) {
-    thing = this._mode.decrypt(this, chunk)
-    out.push(thing)
-  }
-  return Buffer.concat(out)
-}
-Decipher.prototype._final = function () {
-  var chunk = this._cache.flush()
-  if (this._autopadding) {
-    return unpad(this._mode.decrypt(this, chunk))
-  } else if (chunk) {
-    throw new Error('data not multiple of block length')
-  }
-}
-Decipher.prototype.setAutoPadding = function (setTo) {
-  this._autopadding = !!setTo
-  return this
-}
-function Splitter () {
-  if (!(this instanceof Splitter)) {
-    return new Splitter()
-  }
-  this.cache = new Buffer('')
-}
-Splitter.prototype.add = function (data) {
-  this.cache = Buffer.concat([this.cache, data])
-}
-
-Splitter.prototype.get = function (autoPadding) {
-  var out
-  if (autoPadding) {
-    if (this.cache.length > 16) {
-      out = this.cache.slice(0, 16)
-      this.cache = this.cache.slice(16)
-      return out
-    }
-  } else {
-    if (this.cache.length >= 16) {
-      out = this.cache.slice(0, 16)
-      this.cache = this.cache.slice(16)
-      return out
-    }
-  }
-  return null
-}
-Splitter.prototype.flush = function () {
-  if (this.cache.length) {
-    return this.cache
-  }
-}
-function unpad (last) {
-  var padded = last[15]
-  var i = -1
-  while (++i < padded) {
-    if (last[(i + (16 - padded))] !== padded) {
-      throw new Error('unable to decrypt data')
-    }
-  }
-  if (padded === 16) {
-    return
-  }
-  return last.slice(0, 16 - padded)
-}
-
-var modelist = {
-  ECB: require('./modes/ecb'),
-  CBC: require('./modes/cbc'),
-  CFB: require('./modes/cfb'),
-  CFB8: require('./modes/cfb8'),
-  CFB1: require('./modes/cfb1'),
-  OFB: require('./modes/ofb'),
-  CTR: require('./modes/ctr'),
-  GCM: require('./modes/ctr')
-}
-
-function createDecipheriv (suite, password, iv) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  if (typeof iv === 'string') {
-    iv = new Buffer(iv)
-  }
-  if (typeof password === 'string') {
-    password = new Buffer(password)
-  }
-  if (password.length !== config.key / 8) {
-    throw new TypeError('invalid key length ' + password.length)
-  }
-  if (iv.length !== config.iv) {
-    throw new TypeError('invalid iv length ' + iv.length)
-  }
-  if (config.type === 'stream') {
-    return new StreamCipher(modelist[config.mode], password, iv, true)
-  } else if (config.type === 'auth') {
-    return new AuthCipher(modelist[config.mode], password, iv, true)
-  }
-  return new Decipher(modelist[config.mode], password, iv)
-}
-
-function createDecipher (suite, password) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  var keys = ebtk(password, false, config.key, config.iv)
-  return createDecipheriv(suite, keys.key, keys.iv)
-}
-exports.createDecipher = createDecipher
-exports.createDecipheriv = createDecipheriv
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":85,"./authCipher":86,"./modes":91,"./modes/cbc":92,"./modes/cfb":93,"./modes/cfb1":94,"./modes/cfb8":95,"./modes/ctr":96,"./modes/ecb":97,"./modes/ofb":98,"./streamCipher":101,"buffer":3,"cipher-base":100,"evp_bytestokey":102,"inherits":201}],89:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var modes = require('./modes')
-var ebtk = require('evp_bytestokey')
-var StreamCipher = require('./streamCipher')
-var AuthCipher = require('./authCipher')
-inherits(Cipher, Transform)
-function Cipher (mode, key, iv) {
-  if (!(this instanceof Cipher)) {
-    return new Cipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cache = new Splitter()
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  iv.copy(this._prev)
-  this._mode = mode
-  this._autopadding = true
-}
-Cipher.prototype._update = function (data) {
-  this._cache.add(data)
-  var chunk
-  var thing
-  var out = []
-  while ((chunk = this._cache.get())) {
-    thing = this._mode.encrypt(this, chunk)
-    out.push(thing)
-  }
-  return Buffer.concat(out)
-}
-Cipher.prototype._final = function () {
-  var chunk = this._cache.flush()
-  if (this._autopadding) {
-    chunk = this._mode.encrypt(this, chunk)
-    this._cipher.scrub()
-    return chunk
-  } else if (chunk.toString('hex') !== '10101010101010101010101010101010') {
-    this._cipher.scrub()
-    throw new Error('data not multiple of block length')
-  }
-}
-Cipher.prototype.setAutoPadding = function (setTo) {
-  this._autopadding = !!setTo
-  return this
-}
-
-function Splitter () {
-  if (!(this instanceof Splitter)) {
-    return new Splitter()
-  }
-  this.cache = new Buffer('')
-}
-Splitter.prototype.add = function (data) {
-  this.cache = Buffer.concat([this.cache, data])
-}
-
-Splitter.prototype.get = function () {
-  if (this.cache.length > 15) {
-    var out = this.cache.slice(0, 16)
-    this.cache = this.cache.slice(16)
-    return out
-  }
-  return null
-}
-Splitter.prototype.flush = function () {
-  var len = 16 - this.cache.length
-  var padBuff = new Buffer(len)
-
-  var i = -1
-  while (++i < len) {
-    padBuff.writeUInt8(len, i)
-  }
-  var out = Buffer.concat([this.cache, padBuff])
-  return out
-}
-var modelist = {
-  ECB: require('./modes/ecb'),
-  CBC: require('./modes/cbc'),
-  CFB: require('./modes/cfb'),
-  CFB8: require('./modes/cfb8'),
-  CFB1: require('./modes/cfb1'),
-  OFB: require('./modes/ofb'),
-  CTR: require('./modes/ctr'),
-  GCM: require('./modes/ctr')
-}
-
-function createCipheriv (suite, password, iv) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  if (typeof iv === 'string') {
-    iv = new Buffer(iv)
-  }
-  if (typeof password === 'string') {
-    password = new Buffer(password)
-  }
-  if (password.length !== config.key / 8) {
-    throw new TypeError('invalid key length ' + password.length)
-  }
-  if (iv.length !== config.iv) {
-    throw new TypeError('invalid iv length ' + iv.length)
-  }
-  if (config.type === 'stream') {
-    return new StreamCipher(modelist[config.mode], password, iv)
-  } else if (config.type === 'auth') {
-    return new AuthCipher(modelist[config.mode], password, iv)
-  }
-  return new Cipher(modelist[config.mode], password, iv)
-}
-function createCipher (suite, password) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  var keys = ebtk(password, false, config.key, config.iv)
-  return createCipheriv(suite, keys.key, keys.iv)
-}
-
-exports.createCipheriv = createCipheriv
-exports.createCipher = createCipher
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":85,"./authCipher":86,"./modes":91,"./modes/cbc":92,"./modes/cfb":93,"./modes/cfb1":94,"./modes/cfb8":95,"./modes/ctr":96,"./modes/ecb":97,"./modes/ofb":98,"./streamCipher":101,"buffer":3,"cipher-base":100,"evp_bytestokey":102,"inherits":201}],90:[function(require,module,exports){
-(function (Buffer){
-var zeros = new Buffer(16)
-zeros.fill(0)
-module.exports = GHASH
-function GHASH (key) {
-  this.h = key
-  this.state = new Buffer(16)
-  this.state.fill(0)
-  this.cache = new Buffer('')
-}
-// from http://bitwiseshiftleft.github.io/sjcl/doc/symbols/src/core_gcm.js.html
-// by Juho Vähä-Herttua
-GHASH.prototype.ghash = function (block) {
-  var i = -1
-  while (++i < block.length) {
-    this.state[i] ^= block[i]
-  }
-  this._multiply()
-}
-
-GHASH.prototype._multiply = function () {
-  var Vi = toArray(this.h)
-  var Zi = [0, 0, 0, 0]
-  var j, xi, lsb_Vi
-  var i = -1
-  while (++i < 128) {
-    xi = (this.state[~~(i / 8)] & (1 << (7 - i % 8))) !== 0
-    if (xi) {
-      // Z_i+1 = Z_i ^ V_i
-      Zi = xor(Zi, Vi)
-    }
-
-    // Store the value of LSB(V_i)
-    lsb_Vi = (Vi[3] & 1) !== 0
-
-    // V_i+1 = V_i >> 1
-    for (j = 3; j > 0; j--) {
-      Vi[j] = (Vi[j] >>> 1) | ((Vi[j - 1] & 1) << 31)
-    }
-    Vi[0] = Vi[0] >>> 1
-
-    // If LSB(V_i) is 1, V_i+1 = (V_i >> 1) ^ R
-    if (lsb_Vi) {
-      Vi[0] = Vi[0] ^ (0xe1 << 24)
-    }
-  }
-  this.state = fromArray(Zi)
-}
-GHASH.prototype.update = function (buf) {
-  this.cache = Buffer.concat([this.cache, buf])
-  var chunk
-  while (this.cache.length >= 16) {
-    chunk = this.cache.slice(0, 16)
-    this.cache = this.cache.slice(16)
-    this.ghash(chunk)
-  }
-}
-GHASH.prototype.final = function (abl, bl) {
-  if (this.cache.length) {
-    this.ghash(Buffer.concat([this.cache, zeros], 16))
-  }
-  this.ghash(fromArray([
-    0, abl,
-    0, bl
-  ]))
-  return this.state
-}
-
-function toArray (buf) {
-  return [
-    buf.readUInt32BE(0),
-    buf.readUInt32BE(4),
-    buf.readUInt32BE(8),
-    buf.readUInt32BE(12)
-  ]
-}
-function fromArray (out) {
-  out = out.map(fixup_uint32)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[1], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[3], 12)
-  return buf
-}
-var uint_max = Math.pow(2, 32)
-function fixup_uint32 (x) {
-  var ret, x_pos
-  ret = x > uint_max || x < 0 ? (x_pos = Math.abs(x) % uint_max, x < 0 ? uint_max - x_pos : x_pos) : x
-  return ret
-}
-function xor (a, b) {
-  return [
-    a[0] ^ b[0],
-    a[1] ^ b[1],
-    a[2] ^ b[2],
-    a[3] ^ b[3]
-  ]
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],91:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./aes":85,"./authCipher":86,"./modes":91,"./modes/cbc":92,"./modes/cfb":93,"./modes/cfb1":94,"./modes/cfb8":95,"./modes/ctr":96,"./modes/ecb":97,"./modes/ofb":98,"./streamCipher":101,"buffer":3,"cipher-base":100,"dup":12,"evp_bytestokey":102,"inherits":201}],89:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./aes":85,"./authCipher":86,"./modes":91,"./modes/cbc":92,"./modes/cfb":93,"./modes/cfb1":94,"./modes/cfb8":95,"./modes/ctr":96,"./modes/ecb":97,"./modes/ofb":98,"./streamCipher":101,"buffer":3,"cipher-base":100,"dup":13,"evp_bytestokey":102,"inherits":201}],90:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"buffer":3,"dup":14}],91:[function(require,module,exports){
 arguments[4][15][0].apply(exports,arguments)
 },{"dup":15}],92:[function(require,module,exports){
 arguments[4][16][0].apply(exports,arguments)
 },{"buffer-xor":99,"dup":16}],93:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-exports.encrypt = function (self, data, decrypt) {
-  var out = new Buffer('')
-  var len
-
-  while (data.length) {
-    if (self._cache.length === 0) {
-      self._cache = self._cipher.encryptBlock(self._prev)
-      self._prev = new Buffer('')
-    }
-
-    if (self._cache.length <= data.length) {
-      len = self._cache.length
-      out = Buffer.concat([out, encryptStart(self, data.slice(0, len), decrypt)])
-      data = data.slice(len)
-    } else {
-      out = Buffer.concat([out, encryptStart(self, data, decrypt)])
-      break
-    }
-  }
-
-  return out
-}
-function encryptStart (self, data, decrypt) {
-  var len = data.length
-  var out = xor(data, self._cache)
-  self._cache = self._cache.slice(len)
-  self._prev = Buffer.concat([self._prev, decrypt ? data : out])
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":99}],94:[function(require,module,exports){
-(function (Buffer){
-function encryptByte (self, byteParam, decrypt) {
-  var pad
-  var i = -1
-  var len = 8
-  var out = 0
-  var bit, value
-  while (++i < len) {
-    pad = self._cipher.encryptBlock(self._prev)
-    bit = (byteParam & (1 << (7 - i))) ? 0x80 : 0
-    value = pad[0] ^ bit
-    out += ((value & 0x80) >> (i % 8))
-    self._prev = shiftIn(self._prev, decrypt ? bit : value)
-  }
-  return out
-}
-exports.encrypt = function (self, chunk, decrypt) {
-  var len = chunk.length
-  var out = new Buffer(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = encryptByte(self, chunk[i], decrypt)
-  }
-  return out
-}
-function shiftIn (buffer, value) {
-  var len = buffer.length
-  var i = -1
-  var out = new Buffer(buffer.length)
-  buffer = Buffer.concat([buffer, new Buffer([value])])
-  while (++i < len) {
-    out[i] = buffer[i] << 1 | buffer[i + 1] >> (7)
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],95:[function(require,module,exports){
-(function (Buffer){
-function encryptByte (self, byteParam, decrypt) {
-  var pad = self._cipher.encryptBlock(self._prev)
-  var out = pad[0] ^ byteParam
-  self._prev = Buffer.concat([self._prev.slice(1), new Buffer([decrypt ? byteParam : out])])
-  return out
-}
-exports.encrypt = function (self, chunk, decrypt) {
-  var len = chunk.length
-  var out = new Buffer(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = encryptByte(self, chunk[i], decrypt)
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],96:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-function incr32 (iv) {
-  var len = iv.length
-  var item
-  while (len--) {
-    item = iv.readUInt8(len)
-    if (item === 255) {
-      iv.writeUInt8(0, len)
-    } else {
-      item++
-      iv.writeUInt8(item, len)
-      break
-    }
-  }
-}
-
-function getBlock (self) {
-  var out = self._cipher.encryptBlock(self._prev)
-  incr32(self._prev)
-  return out
-}
-
-exports.encrypt = function (self, chunk) {
-  while (self._cache.length < chunk.length) {
-    self._cache = Buffer.concat([self._cache, getBlock(self)])
-  }
-  var pad = self._cache.slice(0, chunk.length)
-  self._cache = self._cache.slice(chunk.length)
-  return xor(chunk, pad)
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":99}],97:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":99,"dup":17}],94:[function(require,module,exports){
+arguments[4][18][0].apply(exports,arguments)
+},{"buffer":3,"dup":18}],95:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"buffer":3,"dup":19}],96:[function(require,module,exports){
+arguments[4][20][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":99,"dup":20}],97:[function(require,module,exports){
 arguments[4][21][0].apply(exports,arguments)
 },{"dup":21}],98:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-function getBlock (self) {
-  self._prev = self._cipher.encryptBlock(self._prev)
-  return self._prev
-}
-
-exports.encrypt = function (self, chunk) {
-  while (self._cache.length < chunk.length) {
-    self._cache = Buffer.concat([self._cache, getBlock(self)])
-  }
-
-  var pad = self._cache.slice(0, chunk.length)
-  self._cache = self._cache.slice(chunk.length)
-  return xor(chunk, pad)
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":99}],99:[function(require,module,exports){
-(function (Buffer){
-module.exports = function xor (a, b) {
-  var length = Math.min(a.length, b.length)
-  var buffer = new Buffer(length)
-
-  for (var i = 0; i < length; ++i) {
-    buffer[i] = a[i] ^ b[i]
-  }
-
-  return buffer
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],100:[function(require,module,exports){
-(function (Buffer){
-var Transform = require('stream').Transform
-var inherits = require('inherits')
-var StringDecoder = require('string_decoder').StringDecoder
-module.exports = CipherBase
-inherits(CipherBase, Transform)
-function CipherBase (hashMode) {
-  Transform.call(this)
-  this.hashMode = typeof hashMode === 'string'
-  if (this.hashMode) {
-    this[hashMode] = this._finalOrDigest
-  } else {
-    this.final = this._finalOrDigest
-  }
-  this._decoder = null
-  this._encoding = null
-}
-CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
-  if (typeof data === 'string') {
-    data = new Buffer(data, inputEnc)
-  }
-  var outData = this._update(data)
-  if (this.hashMode) {
-    return this
-  }
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc)
-  }
-  return outData
-}
-
-CipherBase.prototype.setAutoPadding = function () {}
-
-CipherBase.prototype.getAuthTag = function () {
-  throw new Error('trying to get auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAuthTag = function () {
-  throw new Error('trying to set auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAAD = function () {
-  throw new Error('trying to set aad in unsupported state')
-}
-
-CipherBase.prototype._transform = function (data, _, next) {
-  var err
-  try {
-    if (this.hashMode) {
-      this._update(data)
-    } else {
-      this.push(this._update(data))
-    }
-  } catch (e) {
-    err = e
-  } finally {
-    next(err)
-  }
-}
-CipherBase.prototype._flush = function (done) {
-  var err
-  try {
-    this.push(this._final())
-  } catch (e) {
-    err = e
-  } finally {
-    done(err)
-  }
-}
-CipherBase.prototype._finalOrDigest = function (outputEnc) {
-  var outData = this._final() || new Buffer('')
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc, true)
-  }
-  return outData
-}
-
-CipherBase.prototype._toString = function (value, enc, final) {
-  if (!this._decoder) {
-    this._decoder = new StringDecoder(enc)
-    this._encoding = enc
-  }
-  if (this._encoding !== enc) {
-    throw new Error('can\'t switch encodings')
-  }
-  var out = this._decoder.write(value)
-  if (final) {
-    out += this._decoder.end()
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"inherits":201,"stream":223,"string_decoder":230}],101:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-
-inherits(StreamCipher, Transform)
-module.exports = StreamCipher
-function StreamCipher (mode, key, iv, decrypt) {
-  if (!(this instanceof StreamCipher)) {
-    return new StreamCipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  this._cache = new Buffer('')
-  this._secCache = new Buffer('')
-  this._decrypt = decrypt
-  iv.copy(this._prev)
-  this._mode = mode
-}
-StreamCipher.prototype._update = function (chunk) {
-  return this._mode.encrypt(this, chunk, this._decrypt)
-}
-StreamCipher.prototype._final = function () {
-  this._cipher.scrub()
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":85,"buffer":3,"cipher-base":100,"inherits":201}],102:[function(require,module,exports){
-(function (Buffer){
-var md5 = require('create-hash/md5')
-module.exports = EVP_BytesToKey
-function EVP_BytesToKey (password, salt, keyLen, ivLen) {
-  if (!Buffer.isBuffer(password)) {
-    password = new Buffer(password, 'binary')
-  }
-  if (salt && !Buffer.isBuffer(salt)) {
-    salt = new Buffer(salt, 'binary')
-  }
-  keyLen = keyLen / 8
-  ivLen = ivLen || 0
-  var ki = 0
-  var ii = 0
-  var key = new Buffer(keyLen)
-  var iv = new Buffer(ivLen)
-  var addmd = 0
-  var md_buf
-  var i
-  var bufs = []
-  while (true) {
-    if (addmd++ > 0) {
-      bufs.push(md_buf)
-    }
-    bufs.push(password)
-    if (salt) {
-      bufs.push(salt)
-    }
-    md_buf = md5(Buffer.concat(bufs))
-    bufs = []
-    i = 0
-    if (keyLen > 0) {
-      while (true) {
-        if (keyLen === 0) {
-          break
-        }
-        if (i === md_buf.length) {
-          break
-        }
-        key[ki++] = md_buf[i]
-        keyLen--
-        i++
-      }
-    }
-    if (ivLen > 0 && i !== md_buf.length) {
-      while (true) {
-        if (ivLen === 0) {
-          break
-        }
-        if (i === md_buf.length) {
-          break
-        }
-        iv[ii++] = md_buf[i]
-        ivLen--
-        i++
-      }
-    }
-    if (keyLen === 0 && ivLen === 0) {
-      break
-    }
-  }
-  for (i = 0; i < md_buf.length; i++) {
-    md_buf[i] = 0
-  }
-  return {
-    key: key,
-    iv: iv
-  }
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"create-hash/md5":133}],103:[function(require,module,exports){
+arguments[4][22][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":99,"dup":22}],99:[function(require,module,exports){
+arguments[4][23][0].apply(exports,arguments)
+},{"buffer":3,"dup":23}],100:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"buffer":3,"dup":24,"inherits":201,"stream":223,"string_decoder":230}],101:[function(require,module,exports){
+arguments[4][25][0].apply(exports,arguments)
+},{"./aes":85,"buffer":3,"cipher-base":100,"dup":25,"inherits":201}],102:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"buffer":3,"create-hash/md5":133,"dup":36}],103:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var createHmac = require('create-hmac')
@@ -15841,7 +14734,6 @@ module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
 }).call(this,require("buffer").Buffer)
-
 },{"./curves":39,"bn.js":40,"browserify-rsa":41,"buffer":3,"create-hmac":144,"elliptic":42,"parse-asn1":69}],104:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
@@ -15949,7 +14841,6 @@ function checkValue (b, q) {
 module.exports = verify
 
 }).call(this,require("buffer").Buffer)
-
 },{"./curves":39,"bn.js":40,"buffer":3,"elliptic":42,"parse-asn1":69}],105:[function(require,module,exports){
 (function (Buffer){
 var elliptic = require('elliptic');
@@ -16076,7 +14967,6 @@ function formatReturnValue(bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"bn.js":106,"buffer":3,"elliptic":107}],106:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
 },{"dup":40}],107:[function(require,module,exports){
@@ -16183,7 +15073,6 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./md5":133,"buffer":3,"cipher-base":134,"inherits":201,"ripemd160":135,"sha.js":137}],132:[function(require,module,exports){
 (function (Buffer){
 'use strict';
@@ -16221,7 +15110,6 @@ function hash(buf, fn, hashSize, bigEndian) {
 }
 exports.hash = hash;
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],133:[function(require,module,exports){
 'use strict';
 /*
@@ -16380,101 +15268,8 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 },{"./helpers":132}],134:[function(require,module,exports){
-(function (Buffer){
-var Transform = require('stream').Transform
-var inherits = require('inherits')
-var StringDecoder = require('string_decoder').StringDecoder
-module.exports = CipherBase
-inherits(CipherBase, Transform)
-function CipherBase (hashMode) {
-  Transform.call(this)
-  this.hashMode = typeof hashMode === 'string'
-  if (this.hashMode) {
-    this[hashMode] = this._finalOrDigest
-  } else {
-    this.final = this._finalOrDigest
-  }
-  this._decoder = null
-  this._encoding = null
-}
-CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
-  if (typeof data === 'string') {
-    data = new Buffer(data, inputEnc)
-  }
-  var outData = this._update(data)
-  if (this.hashMode) {
-    return this
-  }
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc)
-  }
-  return outData
-}
-
-CipherBase.prototype.setAutoPadding = function () {}
-
-CipherBase.prototype.getAuthTag = function () {
-  throw new Error('trying to get auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAuthTag = function () {
-  throw new Error('trying to set auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAAD = function () {
-  throw new Error('trying to set aad in unsupported state')
-}
-
-CipherBase.prototype._transform = function (data, _, next) {
-  var err
-  try {
-    if (this.hashMode) {
-      this._update(data)
-    } else {
-      this.push(this._update(data))
-    }
-  } catch (e) {
-    err = e
-  } finally {
-    next(err)
-  }
-}
-CipherBase.prototype._flush = function (done) {
-  var err
-  try {
-    this.push(this._final())
-  } catch (e) {
-    err = e
-  } finally {
-    done(err)
-  }
-}
-CipherBase.prototype._finalOrDigest = function (outputEnc) {
-  var outData = this._final() || new Buffer('')
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc, true)
-  }
-  return outData
-}
-
-CipherBase.prototype._toString = function (value, enc, final) {
-  if (!this._decoder) {
-    this._decoder = new StringDecoder(enc)
-    this._encoding = enc
-  }
-  if (this._encoding !== enc) {
-    throw new Error('can\'t switch encodings')
-  }
-  var out = this._decoder.write(value)
-  if (final) {
-    out += this._decoder.end()
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"inherits":201,"stream":223,"string_decoder":230}],135:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"buffer":3,"dup":24,"inherits":201,"stream":223,"string_decoder":230}],135:[function(require,module,exports){
 (function (Buffer){
 /*
 CryptoJS v3.1.2
@@ -16688,7 +15483,6 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],136:[function(require,module,exports){
 (function (Buffer){
 // prototype class for hash functions
@@ -16762,7 +15556,6 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3}],137:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
@@ -16884,7 +15677,6 @@ module.exports = Sha
 
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"buffer":3,"inherits":201}],139:[function(require,module,exports){
 (function (Buffer){
 /*
@@ -16985,7 +15777,6 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"buffer":3,"inherits":201}],140:[function(require,module,exports){
 (function (Buffer){
 /**
@@ -17042,7 +15833,6 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"./sha256":141,"buffer":3,"inherits":201}],141:[function(require,module,exports){
 (function (Buffer){
 /**
@@ -17188,7 +15978,6 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"buffer":3,"inherits":201}],142:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
@@ -17249,7 +16038,6 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"./sha512":143,"buffer":3,"inherits":201}],143:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
@@ -17520,7 +16308,6 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-
 },{"./hash":136,"buffer":3,"inherits":201}],144:[function(require,module,exports){
 (function (Buffer){
 'use strict';
@@ -17593,7 +16380,6 @@ module.exports = function createHmac(alg, key) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"create-hash/browser":131,"inherits":201,"stream":223}],145:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime')
@@ -17640,7 +16426,6 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
-
 },{"./lib/dh":146,"./lib/generatePrime":147,"./lib/primes":148,"buffer":3}],146:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
@@ -17809,7 +16594,6 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"./generatePrime":147,"bn.js":149,"buffer":3,"miller-rabin":150,"randombytes":198}],147:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
@@ -18155,7 +16939,6 @@ function pbkdf2Sync (password, salt, iterations, keylen, digest) {
 }
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"create-hmac":144}],153:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt');
 exports.privateDecrypt = require('./privateDecrypt');
@@ -18186,200 +16969,19 @@ function i2ops(c) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"create-hash":131}],155:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
 },{"dup":40}],156:[function(require,module,exports){
-(function (Buffer){
-var bn = require('bn.js');
-var randomBytes = require('randombytes');
-module.exports = crt;
-function blind(priv) {
-  var r = getr(priv);
-  var blinder = r.toRed(bn.mont(priv.modulus))
-  .redPow(new bn(priv.publicExponent)).fromRed();
-  return {
-    blinder: blinder,
-    unblinder:r.invm(priv.modulus)
-  };
-}
-function crt(msg, priv) {
-  var blinds = blind(priv);
-  var len = priv.modulus.byteLength();
-  var mod = bn.mont(priv.modulus);
-  var blinded = new bn(msg).mul(blinds.blinder).umod(priv.modulus);
-  var c1 = blinded.toRed(bn.mont(priv.prime1));
-  var c2 = blinded.toRed(bn.mont(priv.prime2));
-  var qinv = priv.coefficient;
-  var p = priv.prime1;
-  var q = priv.prime2;
-  var m1 = c1.redPow(priv.exponent1);
-  var m2 = c2.redPow(priv.exponent2);
-  m1 = m1.fromRed();
-  m2 = m2.fromRed();
-  var h = m1.isub(m2).imul(qinv).umod(p);
-  h.imul(q);
-  m2.iadd(h);
-  return new Buffer(m2.imul(blinds.unblinder).umod(priv.modulus).toArray(false, len));
-}
-crt.getr = getr;
-function getr(priv) {
-  var len = priv.modulus.byteLength();
-  var r = new bn(randomBytes(len));
-  while (r.cmp(priv.modulus) >=  0 || !r.umod(priv.prime1) || !r.umod(priv.prime2)) {
-    r = new bn(randomBytes(len));
-  }
-  return r;
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"bn.js":155,"buffer":3,"randombytes":198}],157:[function(require,module,exports){
+arguments[4][41][0].apply(exports,arguments)
+},{"bn.js":155,"buffer":3,"dup":41,"randombytes":198}],157:[function(require,module,exports){
 arguments[4][66][0].apply(exports,arguments)
 },{"dup":66}],158:[function(require,module,exports){
 arguments[4][67][0].apply(exports,arguments)
 },{"asn1.js":161,"dup":67}],159:[function(require,module,exports){
-(function (Buffer){
-// adapted from https://github.com/apatil/pemstrip
-var findProc = /Proc-Type: 4,ENCRYPTED\r?\nDEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)\r?\n\r?\n([0-9A-z\n\r\+\/\=]+)\r?\n/m
-var startRegex = /^-----BEGIN (.*) KEY-----\r?\n/m
-var fullRegex = /^-----BEGIN (.*) KEY-----\r?\n([0-9A-z\n\r\+\/\=]+)\r?\n-----END \1 KEY-----$/m
-var evp = require('evp_bytestokey')
-var ciphers = require('browserify-aes')
-module.exports = function (okey, password) {
-  var key = okey.toString()
-  var match = key.match(findProc)
-  var decrypted
-  if (!match) {
-    var match2 = key.match(fullRegex)
-    decrypted = new Buffer(match2[2].replace(/\r?\n/g, ''), 'base64')
-  } else {
-    var suite = 'aes' + match[1]
-    var iv = new Buffer(match[2], 'hex')
-    var cipherText = new Buffer(match[3].replace(/\r?\n/g, ''), 'base64')
-    var cipherKey = evp(password, iv.slice(0, 8), parseInt(match[1], 10)).key
-    var out = []
-    var cipher = ciphers.createDecipheriv(suite, cipherKey, iv)
-    out.push(cipher.update(cipherText))
-    out.push(cipher.final())
-    decrypted = Buffer.concat(out)
-  }
-  var tag = key.match(startRegex)[1] + ' KEY'
-  return {
-    tag: tag,
-    data: decrypted
-  }
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"browserify-aes":178,"buffer":3,"evp_bytestokey":193}],160:[function(require,module,exports){
-(function (Buffer){
-var asn1 = require('./asn1')
-var aesid = require('./aesid.json')
-var fixProc = require('./fixProc')
-var ciphers = require('browserify-aes')
-var compat = require('pbkdf2')
-module.exports = parseKeys
-
-function parseKeys (buffer) {
-  var password
-  if (typeof buffer === 'object' && !Buffer.isBuffer(buffer)) {
-    password = buffer.passphrase
-    buffer = buffer.key
-  }
-  if (typeof buffer === 'string') {
-    buffer = new Buffer(buffer)
-  }
-
-  var stripped = fixProc(buffer, password)
-
-  var type = stripped.tag
-  var data = stripped.data
-  var subtype, ndata
-  switch (type) {
-    case 'PUBLIC KEY':
-      ndata = asn1.PublicKey.decode(data, 'der')
-      subtype = ndata.algorithm.algorithm.join('.')
-      switch (subtype) {
-        case '1.2.840.113549.1.1.1':
-          return asn1.RSAPublicKey.decode(ndata.subjectPublicKey.data, 'der')
-        case '1.2.840.10045.2.1':
-          ndata.subjectPrivateKey = ndata.subjectPublicKey
-          return {
-            type: 'ec',
-            data: ndata
-          }
-        case '1.2.840.10040.4.1':
-          ndata.algorithm.params.pub_key = asn1.DSAparam.decode(ndata.subjectPublicKey.data, 'der')
-          return {
-            type: 'dsa',
-            data: ndata.algorithm.params
-          }
-        default: throw new Error('unknown key id ' + subtype)
-      }
-      throw new Error('unknown key type ' + type)
-    case 'ENCRYPTED PRIVATE KEY':
-      data = asn1.EncryptedPrivateKey.decode(data, 'der')
-      data = decrypt(data, password)
-      // falls through
-    case 'PRIVATE KEY':
-      ndata = asn1.PrivateKey.decode(data, 'der')
-      subtype = ndata.algorithm.algorithm.join('.')
-      switch (subtype) {
-        case '1.2.840.113549.1.1.1':
-          return asn1.RSAPrivateKey.decode(ndata.subjectPrivateKey, 'der')
-        case '1.2.840.10045.2.1':
-          return {
-            curve: ndata.algorithm.curve,
-            privateKey: asn1.ECPrivateKey.decode(ndata.subjectPrivateKey, 'der').privateKey
-          }
-        case '1.2.840.10040.4.1':
-          ndata.algorithm.params.priv_key = asn1.DSAparam.decode(ndata.subjectPrivateKey, 'der')
-          return {
-            type: 'dsa',
-            params: ndata.algorithm.params
-          }
-        default: throw new Error('unknown key id ' + subtype)
-      }
-      throw new Error('unknown key type ' + type)
-    case 'RSA PUBLIC KEY':
-      return asn1.RSAPublicKey.decode(data, 'der')
-    case 'RSA PRIVATE KEY':
-      return asn1.RSAPrivateKey.decode(data, 'der')
-    case 'DSA PRIVATE KEY':
-      return {
-        type: 'dsa',
-        params: asn1.DSAPrivateKey.decode(data, 'der')
-      }
-    case 'EC PRIVATE KEY':
-      data = asn1.ECPrivateKey.decode(data, 'der')
-      return {
-        curve: data.parameters.value,
-        privateKey: data.privateKey
-      }
-    default: throw new Error('unknown key type ' + type)
-  }
-}
-parseKeys.signature = asn1.signature
-function decrypt (data, password) {
-  var salt = data.algorithm.decrypt.kde.kdeparams.salt
-  var iters = parseInt(data.algorithm.decrypt.kde.kdeparams.iters.toString(), 10)
-  var algo = aesid[data.algorithm.decrypt.cipher.algo.join('.')]
-  var iv = data.algorithm.decrypt.cipher.iv
-  var cipherText = data.subjectPrivateKey
-  var keylen = parseInt(algo.split('-')[1], 10) / 8
-  var key = compat.pbkdf2Sync(password, salt, iters, keylen)
-  var cipher = ciphers.createDecipheriv(algo, key, iv)
-  var out = []
-  out.push(cipher.update(cipherText))
-  out.push(cipher.final())
-  return Buffer.concat(out)
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aesid.json":157,"./asn1":158,"./fixProc":159,"browserify-aes":178,"buffer":3,"pbkdf2":152}],161:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"browserify-aes":178,"buffer":3,"dup":68,"evp_bytestokey":193}],160:[function(require,module,exports){
+arguments[4][69][0].apply(exports,arguments)
+},{"./aesid.json":157,"./asn1":158,"./fixProc":159,"browserify-aes":178,"buffer":3,"dup":69,"pbkdf2":152}],161:[function(require,module,exports){
 arguments[4][70][0].apply(exports,arguments)
 },{"./asn1/api":162,"./asn1/base":164,"./asn1/constants":168,"./asn1/decoders":170,"./asn1/encoders":173,"bn.js":155,"dup":70}],162:[function(require,module,exports){
 arguments[4][71][0].apply(exports,arguments)
@@ -18410,1035 +17012,42 @@ arguments[4][83][0].apply(exports,arguments)
 },{"../../asn1":161,"./der":172,"buffer":3,"dup":83,"inherits":201}],175:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
 },{"dup":35}],176:[function(require,module,exports){
-(function (Buffer){
-// based on the aes implimentation in triple sec
-// https://github.com/keybase/triplesec
-
-// which is in turn based on the one from crypto-js
-// https://code.google.com/p/crypto-js/
-
-var uint_max = Math.pow(2, 32)
-function fixup_uint32 (x) {
-  var ret, x_pos
-  ret = x > uint_max || x < 0 ? (x_pos = Math.abs(x) % uint_max, x < 0 ? uint_max - x_pos : x_pos) : x
-  return ret
-}
-function scrub_vec (v) {
-  for (var i = 0; i < v.length; v++) {
-    v[i] = 0
-  }
-  return false
-}
-
-function Global () {
-  this.SBOX = []
-  this.INV_SBOX = []
-  this.SUB_MIX = [[], [], [], []]
-  this.INV_SUB_MIX = [[], [], [], []]
-  this.init()
-  this.RCON = [0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
-}
-
-Global.prototype.init = function () {
-  var d, i, sx, t, x, x2, x4, x8, xi, _i
-  d = (function () {
-    var _i, _results
-    _results = []
-    for (i = _i = 0; _i < 256; i = ++_i) {
-      if (i < 128) {
-        _results.push(i << 1)
-      } else {
-        _results.push((i << 1) ^ 0x11b)
-      }
-    }
-    return _results
-  })()
-  x = 0
-  xi = 0
-  for (i = _i = 0; _i < 256; i = ++_i) {
-    sx = xi ^ (xi << 1) ^ (xi << 2) ^ (xi << 3) ^ (xi << 4)
-    sx = (sx >>> 8) ^ (sx & 0xff) ^ 0x63
-    this.SBOX[x] = sx
-    this.INV_SBOX[sx] = x
-    x2 = d[x]
-    x4 = d[x2]
-    x8 = d[x4]
-    t = (d[sx] * 0x101) ^ (sx * 0x1010100)
-    this.SUB_MIX[0][x] = (t << 24) | (t >>> 8)
-    this.SUB_MIX[1][x] = (t << 16) | (t >>> 16)
-    this.SUB_MIX[2][x] = (t << 8) | (t >>> 24)
-    this.SUB_MIX[3][x] = t
-    t = (x8 * 0x1010101) ^ (x4 * 0x10001) ^ (x2 * 0x101) ^ (x * 0x1010100)
-    this.INV_SUB_MIX[0][sx] = (t << 24) | (t >>> 8)
-    this.INV_SUB_MIX[1][sx] = (t << 16) | (t >>> 16)
-    this.INV_SUB_MIX[2][sx] = (t << 8) | (t >>> 24)
-    this.INV_SUB_MIX[3][sx] = t
-    if (x === 0) {
-      x = xi = 1
-    } else {
-      x = x2 ^ d[d[d[x8 ^ x2]]]
-      xi ^= d[d[xi]]
-    }
-  }
-  return true
-}
-
-var G = new Global()
-
-AES.blockSize = 4 * 4
-
-AES.prototype.blockSize = AES.blockSize
-
-AES.keySize = 256 / 8
-
-AES.prototype.keySize = AES.keySize
-
-function bufferToArray (buf) {
-  var len = buf.length / 4
-  var out = new Array(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = buf.readUInt32BE(i * 4)
-  }
-  return out
-}
-function AES (key) {
-  this._key = bufferToArray(key)
-  this._doReset()
-}
-
-AES.prototype._doReset = function () {
-  var invKsRow, keySize, keyWords, ksRow, ksRows, t
-  keyWords = this._key
-  keySize = keyWords.length
-  this._nRounds = keySize + 6
-  ksRows = (this._nRounds + 1) * 4
-  this._keySchedule = []
-  for (ksRow = 0; ksRow < ksRows; ksRow++) {
-    this._keySchedule[ksRow] = ksRow < keySize ? keyWords[ksRow] : (t = this._keySchedule[ksRow - 1], (ksRow % keySize) === 0 ? (t = (t << 8) | (t >>> 24), t = (G.SBOX[t >>> 24] << 24) | (G.SBOX[(t >>> 16) & 0xff] << 16) | (G.SBOX[(t >>> 8) & 0xff] << 8) | G.SBOX[t & 0xff], t ^= G.RCON[(ksRow / keySize) | 0] << 24) : keySize > 6 && ksRow % keySize === 4 ? t = (G.SBOX[t >>> 24] << 24) | (G.SBOX[(t >>> 16) & 0xff] << 16) | (G.SBOX[(t >>> 8) & 0xff] << 8) | G.SBOX[t & 0xff] : void 0, this._keySchedule[ksRow - keySize] ^ t)
-  }
-  this._invKeySchedule = []
-  for (invKsRow = 0; invKsRow < ksRows; invKsRow++) {
-    ksRow = ksRows - invKsRow
-    t = this._keySchedule[ksRow - (invKsRow % 4 ? 0 : 4)]
-    this._invKeySchedule[invKsRow] = invKsRow < 4 || ksRow <= 4 ? t : G.INV_SUB_MIX[0][G.SBOX[t >>> 24]] ^ G.INV_SUB_MIX[1][G.SBOX[(t >>> 16) & 0xff]] ^ G.INV_SUB_MIX[2][G.SBOX[(t >>> 8) & 0xff]] ^ G.INV_SUB_MIX[3][G.SBOX[t & 0xff]]
-  }
-  return true
-}
-
-AES.prototype.encryptBlock = function (M) {
-  M = bufferToArray(new Buffer(M))
-  var out = this._doCryptBlock(M, this._keySchedule, G.SUB_MIX, G.SBOX)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[1], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[3], 12)
-  return buf
-}
-
-AES.prototype.decryptBlock = function (M) {
-  M = bufferToArray(new Buffer(M))
-  var temp = [M[3], M[1]]
-  M[1] = temp[0]
-  M[3] = temp[1]
-  var out = this._doCryptBlock(M, this._invKeySchedule, G.INV_SUB_MIX, G.INV_SBOX)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[3], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[1], 12)
-  return buf
-}
-
-AES.prototype.scrub = function () {
-  scrub_vec(this._keySchedule)
-  scrub_vec(this._invKeySchedule)
-  scrub_vec(this._key)
-}
-
-AES.prototype._doCryptBlock = function (M, keySchedule, SUB_MIX, SBOX) {
-  var ksRow, s0, s1, s2, s3, t0, t1, t2, t3
-
-  s0 = M[0] ^ keySchedule[0]
-  s1 = M[1] ^ keySchedule[1]
-  s2 = M[2] ^ keySchedule[2]
-  s3 = M[3] ^ keySchedule[3]
-  ksRow = 4
-  for (var round = 1; round < this._nRounds; round++) {
-    t0 = SUB_MIX[0][s0 >>> 24] ^ SUB_MIX[1][(s1 >>> 16) & 0xff] ^ SUB_MIX[2][(s2 >>> 8) & 0xff] ^ SUB_MIX[3][s3 & 0xff] ^ keySchedule[ksRow++]
-    t1 = SUB_MIX[0][s1 >>> 24] ^ SUB_MIX[1][(s2 >>> 16) & 0xff] ^ SUB_MIX[2][(s3 >>> 8) & 0xff] ^ SUB_MIX[3][s0 & 0xff] ^ keySchedule[ksRow++]
-    t2 = SUB_MIX[0][s2 >>> 24] ^ SUB_MIX[1][(s3 >>> 16) & 0xff] ^ SUB_MIX[2][(s0 >>> 8) & 0xff] ^ SUB_MIX[3][s1 & 0xff] ^ keySchedule[ksRow++]
-    t3 = SUB_MIX[0][s3 >>> 24] ^ SUB_MIX[1][(s0 >>> 16) & 0xff] ^ SUB_MIX[2][(s1 >>> 8) & 0xff] ^ SUB_MIX[3][s2 & 0xff] ^ keySchedule[ksRow++]
-    s0 = t0
-    s1 = t1
-    s2 = t2
-    s3 = t3
-  }
-  t0 = ((SBOX[s0 >>> 24] << 24) | (SBOX[(s1 >>> 16) & 0xff] << 16) | (SBOX[(s2 >>> 8) & 0xff] << 8) | SBOX[s3 & 0xff]) ^ keySchedule[ksRow++]
-  t1 = ((SBOX[s1 >>> 24] << 24) | (SBOX[(s2 >>> 16) & 0xff] << 16) | (SBOX[(s3 >>> 8) & 0xff] << 8) | SBOX[s0 & 0xff]) ^ keySchedule[ksRow++]
-  t2 = ((SBOX[s2 >>> 24] << 24) | (SBOX[(s3 >>> 16) & 0xff] << 16) | (SBOX[(s0 >>> 8) & 0xff] << 8) | SBOX[s1 & 0xff]) ^ keySchedule[ksRow++]
-  t3 = ((SBOX[s3 >>> 24] << 24) | (SBOX[(s0 >>> 16) & 0xff] << 16) | (SBOX[(s1 >>> 8) & 0xff] << 8) | SBOX[s2 & 0xff]) ^ keySchedule[ksRow++]
-  return [
-    fixup_uint32(t0),
-    fixup_uint32(t1),
-    fixup_uint32(t2),
-    fixup_uint32(t3)
-  ]
-}
-
-exports.AES = AES
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],177:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var GHASH = require('./ghash')
-var xor = require('buffer-xor')
-inherits(StreamCipher, Transform)
-module.exports = StreamCipher
-
-function StreamCipher (mode, key, iv, decrypt) {
-  if (!(this instanceof StreamCipher)) {
-    return new StreamCipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._finID = Buffer.concat([iv, new Buffer([0, 0, 0, 1])])
-  iv = Buffer.concat([iv, new Buffer([0, 0, 0, 2])])
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  this._cache = new Buffer('')
-  this._secCache = new Buffer('')
-  this._decrypt = decrypt
-  this._alen = 0
-  this._len = 0
-  iv.copy(this._prev)
-  this._mode = mode
-  var h = new Buffer(4)
-  h.fill(0)
-  this._ghash = new GHASH(this._cipher.encryptBlock(h))
-  this._authTag = null
-  this._called = false
-}
-StreamCipher.prototype._update = function (chunk) {
-  if (!this._called && this._alen) {
-    var rump = 16 - (this._alen % 16)
-    if (rump < 16) {
-      rump = new Buffer(rump)
-      rump.fill(0)
-      this._ghash.update(rump)
-    }
-  }
-  this._called = true
-  var out = this._mode.encrypt(this, chunk)
-  if (this._decrypt) {
-    this._ghash.update(chunk)
-  } else {
-    this._ghash.update(out)
-  }
-  this._len += chunk.length
-  return out
-}
-StreamCipher.prototype._final = function () {
-  if (this._decrypt && !this._authTag) {
-    throw new Error('Unsupported state or unable to authenticate data')
-  }
-  var tag = xor(this._ghash.final(this._alen * 8, this._len * 8), this._cipher.encryptBlock(this._finID))
-  if (this._decrypt) {
-    if (xorTest(tag, this._authTag)) {
-      throw new Error('Unsupported state or unable to authenticate data')
-    }
-  } else {
-    this._authTag = tag
-  }
-  this._cipher.scrub()
-}
-StreamCipher.prototype.getAuthTag = function getAuthTag () {
-  if (!this._decrypt && Buffer.isBuffer(this._authTag)) {
-    return this._authTag
-  } else {
-    throw new Error('Attempting to get auth tag in unsupported state')
-  }
-}
-StreamCipher.prototype.setAuthTag = function setAuthTag (tag) {
-  if (this._decrypt) {
-    this._authTag = tag
-  } else {
-    throw new Error('Attempting to set auth tag in unsupported state')
-  }
-}
-StreamCipher.prototype.setAAD = function setAAD (buf) {
-  if (!this._called) {
-    this._ghash.update(buf)
-    this._alen += buf.length
-  } else {
-    throw new Error('Attempting to set AAD in unsupported state')
-  }
-}
-function xorTest (a, b) {
-  var out = 0
-  if (a.length !== b.length) {
-    out++
-  }
-  var len = Math.min(a.length, b.length)
-  var i = -1
-  while (++i < len) {
-    out += (a[i] ^ b[i])
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":176,"./ghash":181,"buffer":3,"buffer-xor":190,"cipher-base":191,"inherits":201}],178:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"buffer":3,"dup":9}],177:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"./aes":176,"./ghash":181,"buffer":3,"buffer-xor":190,"cipher-base":191,"dup":10,"inherits":201}],178:[function(require,module,exports){
 arguments[4][11][0].apply(exports,arguments)
 },{"./decrypter":179,"./encrypter":180,"./modes":182,"dup":11}],179:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var modes = require('./modes')
-var StreamCipher = require('./streamCipher')
-var AuthCipher = require('./authCipher')
-var ebtk = require('evp_bytestokey')
-
-inherits(Decipher, Transform)
-function Decipher (mode, key, iv) {
-  if (!(this instanceof Decipher)) {
-    return new Decipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cache = new Splitter()
-  this._last = void 0
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  iv.copy(this._prev)
-  this._mode = mode
-  this._autopadding = true
-}
-Decipher.prototype._update = function (data) {
-  this._cache.add(data)
-  var chunk
-  var thing
-  var out = []
-  while ((chunk = this._cache.get(this._autopadding))) {
-    thing = this._mode.decrypt(this, chunk)
-    out.push(thing)
-  }
-  return Buffer.concat(out)
-}
-Decipher.prototype._final = function () {
-  var chunk = this._cache.flush()
-  if (this._autopadding) {
-    return unpad(this._mode.decrypt(this, chunk))
-  } else if (chunk) {
-    throw new Error('data not multiple of block length')
-  }
-}
-Decipher.prototype.setAutoPadding = function (setTo) {
-  this._autopadding = !!setTo
-  return this
-}
-function Splitter () {
-  if (!(this instanceof Splitter)) {
-    return new Splitter()
-  }
-  this.cache = new Buffer('')
-}
-Splitter.prototype.add = function (data) {
-  this.cache = Buffer.concat([this.cache, data])
-}
-
-Splitter.prototype.get = function (autoPadding) {
-  var out
-  if (autoPadding) {
-    if (this.cache.length > 16) {
-      out = this.cache.slice(0, 16)
-      this.cache = this.cache.slice(16)
-      return out
-    }
-  } else {
-    if (this.cache.length >= 16) {
-      out = this.cache.slice(0, 16)
-      this.cache = this.cache.slice(16)
-      return out
-    }
-  }
-  return null
-}
-Splitter.prototype.flush = function () {
-  if (this.cache.length) {
-    return this.cache
-  }
-}
-function unpad (last) {
-  var padded = last[15]
-  var i = -1
-  while (++i < padded) {
-    if (last[(i + (16 - padded))] !== padded) {
-      throw new Error('unable to decrypt data')
-    }
-  }
-  if (padded === 16) {
-    return
-  }
-  return last.slice(0, 16 - padded)
-}
-
-var modelist = {
-  ECB: require('./modes/ecb'),
-  CBC: require('./modes/cbc'),
-  CFB: require('./modes/cfb'),
-  CFB8: require('./modes/cfb8'),
-  CFB1: require('./modes/cfb1'),
-  OFB: require('./modes/ofb'),
-  CTR: require('./modes/ctr'),
-  GCM: require('./modes/ctr')
-}
-
-function createDecipheriv (suite, password, iv) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  if (typeof iv === 'string') {
-    iv = new Buffer(iv)
-  }
-  if (typeof password === 'string') {
-    password = new Buffer(password)
-  }
-  if (password.length !== config.key / 8) {
-    throw new TypeError('invalid key length ' + password.length)
-  }
-  if (iv.length !== config.iv) {
-    throw new TypeError('invalid iv length ' + iv.length)
-  }
-  if (config.type === 'stream') {
-    return new StreamCipher(modelist[config.mode], password, iv, true)
-  } else if (config.type === 'auth') {
-    return new AuthCipher(modelist[config.mode], password, iv, true)
-  }
-  return new Decipher(modelist[config.mode], password, iv)
-}
-
-function createDecipher (suite, password) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  var keys = ebtk(password, false, config.key, config.iv)
-  return createDecipheriv(suite, keys.key, keys.iv)
-}
-exports.createDecipher = createDecipher
-exports.createDecipheriv = createDecipheriv
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":176,"./authCipher":177,"./modes":182,"./modes/cbc":183,"./modes/cfb":184,"./modes/cfb1":185,"./modes/cfb8":186,"./modes/ctr":187,"./modes/ecb":188,"./modes/ofb":189,"./streamCipher":192,"buffer":3,"cipher-base":191,"evp_bytestokey":193,"inherits":201}],180:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-var modes = require('./modes')
-var ebtk = require('evp_bytestokey')
-var StreamCipher = require('./streamCipher')
-var AuthCipher = require('./authCipher')
-inherits(Cipher, Transform)
-function Cipher (mode, key, iv) {
-  if (!(this instanceof Cipher)) {
-    return new Cipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cache = new Splitter()
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  iv.copy(this._prev)
-  this._mode = mode
-  this._autopadding = true
-}
-Cipher.prototype._update = function (data) {
-  this._cache.add(data)
-  var chunk
-  var thing
-  var out = []
-  while ((chunk = this._cache.get())) {
-    thing = this._mode.encrypt(this, chunk)
-    out.push(thing)
-  }
-  return Buffer.concat(out)
-}
-Cipher.prototype._final = function () {
-  var chunk = this._cache.flush()
-  if (this._autopadding) {
-    chunk = this._mode.encrypt(this, chunk)
-    this._cipher.scrub()
-    return chunk
-  } else if (chunk.toString('hex') !== '10101010101010101010101010101010') {
-    this._cipher.scrub()
-    throw new Error('data not multiple of block length')
-  }
-}
-Cipher.prototype.setAutoPadding = function (setTo) {
-  this._autopadding = !!setTo
-  return this
-}
-
-function Splitter () {
-  if (!(this instanceof Splitter)) {
-    return new Splitter()
-  }
-  this.cache = new Buffer('')
-}
-Splitter.prototype.add = function (data) {
-  this.cache = Buffer.concat([this.cache, data])
-}
-
-Splitter.prototype.get = function () {
-  if (this.cache.length > 15) {
-    var out = this.cache.slice(0, 16)
-    this.cache = this.cache.slice(16)
-    return out
-  }
-  return null
-}
-Splitter.prototype.flush = function () {
-  var len = 16 - this.cache.length
-  var padBuff = new Buffer(len)
-
-  var i = -1
-  while (++i < len) {
-    padBuff.writeUInt8(len, i)
-  }
-  var out = Buffer.concat([this.cache, padBuff])
-  return out
-}
-var modelist = {
-  ECB: require('./modes/ecb'),
-  CBC: require('./modes/cbc'),
-  CFB: require('./modes/cfb'),
-  CFB8: require('./modes/cfb8'),
-  CFB1: require('./modes/cfb1'),
-  OFB: require('./modes/ofb'),
-  CTR: require('./modes/ctr'),
-  GCM: require('./modes/ctr')
-}
-
-function createCipheriv (suite, password, iv) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  if (typeof iv === 'string') {
-    iv = new Buffer(iv)
-  }
-  if (typeof password === 'string') {
-    password = new Buffer(password)
-  }
-  if (password.length !== config.key / 8) {
-    throw new TypeError('invalid key length ' + password.length)
-  }
-  if (iv.length !== config.iv) {
-    throw new TypeError('invalid iv length ' + iv.length)
-  }
-  if (config.type === 'stream') {
-    return new StreamCipher(modelist[config.mode], password, iv)
-  } else if (config.type === 'auth') {
-    return new AuthCipher(modelist[config.mode], password, iv)
-  }
-  return new Cipher(modelist[config.mode], password, iv)
-}
-function createCipher (suite, password) {
-  var config = modes[suite.toLowerCase()]
-  if (!config) {
-    throw new TypeError('invalid suite type')
-  }
-  var keys = ebtk(password, false, config.key, config.iv)
-  return createCipheriv(suite, keys.key, keys.iv)
-}
-
-exports.createCipheriv = createCipheriv
-exports.createCipher = createCipher
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":176,"./authCipher":177,"./modes":182,"./modes/cbc":183,"./modes/cfb":184,"./modes/cfb1":185,"./modes/cfb8":186,"./modes/ctr":187,"./modes/ecb":188,"./modes/ofb":189,"./streamCipher":192,"buffer":3,"cipher-base":191,"evp_bytestokey":193,"inherits":201}],181:[function(require,module,exports){
-(function (Buffer){
-var zeros = new Buffer(16)
-zeros.fill(0)
-module.exports = GHASH
-function GHASH (key) {
-  this.h = key
-  this.state = new Buffer(16)
-  this.state.fill(0)
-  this.cache = new Buffer('')
-}
-// from http://bitwiseshiftleft.github.io/sjcl/doc/symbols/src/core_gcm.js.html
-// by Juho Vähä-Herttua
-GHASH.prototype.ghash = function (block) {
-  var i = -1
-  while (++i < block.length) {
-    this.state[i] ^= block[i]
-  }
-  this._multiply()
-}
-
-GHASH.prototype._multiply = function () {
-  var Vi = toArray(this.h)
-  var Zi = [0, 0, 0, 0]
-  var j, xi, lsb_Vi
-  var i = -1
-  while (++i < 128) {
-    xi = (this.state[~~(i / 8)] & (1 << (7 - i % 8))) !== 0
-    if (xi) {
-      // Z_i+1 = Z_i ^ V_i
-      Zi = xor(Zi, Vi)
-    }
-
-    // Store the value of LSB(V_i)
-    lsb_Vi = (Vi[3] & 1) !== 0
-
-    // V_i+1 = V_i >> 1
-    for (j = 3; j > 0; j--) {
-      Vi[j] = (Vi[j] >>> 1) | ((Vi[j - 1] & 1) << 31)
-    }
-    Vi[0] = Vi[0] >>> 1
-
-    // If LSB(V_i) is 1, V_i+1 = (V_i >> 1) ^ R
-    if (lsb_Vi) {
-      Vi[0] = Vi[0] ^ (0xe1 << 24)
-    }
-  }
-  this.state = fromArray(Zi)
-}
-GHASH.prototype.update = function (buf) {
-  this.cache = Buffer.concat([this.cache, buf])
-  var chunk
-  while (this.cache.length >= 16) {
-    chunk = this.cache.slice(0, 16)
-    this.cache = this.cache.slice(16)
-    this.ghash(chunk)
-  }
-}
-GHASH.prototype.final = function (abl, bl) {
-  if (this.cache.length) {
-    this.ghash(Buffer.concat([this.cache, zeros], 16))
-  }
-  this.ghash(fromArray([
-    0, abl,
-    0, bl
-  ]))
-  return this.state
-}
-
-function toArray (buf) {
-  return [
-    buf.readUInt32BE(0),
-    buf.readUInt32BE(4),
-    buf.readUInt32BE(8),
-    buf.readUInt32BE(12)
-  ]
-}
-function fromArray (out) {
-  out = out.map(fixup_uint32)
-  var buf = new Buffer(16)
-  buf.writeUInt32BE(out[0], 0)
-  buf.writeUInt32BE(out[1], 4)
-  buf.writeUInt32BE(out[2], 8)
-  buf.writeUInt32BE(out[3], 12)
-  return buf
-}
-var uint_max = Math.pow(2, 32)
-function fixup_uint32 (x) {
-  var ret, x_pos
-  ret = x > uint_max || x < 0 ? (x_pos = Math.abs(x) % uint_max, x < 0 ? uint_max - x_pos : x_pos) : x
-  return ret
-}
-function xor (a, b) {
-  return [
-    a[0] ^ b[0],
-    a[1] ^ b[1],
-    a[2] ^ b[2],
-    a[3] ^ b[3]
-  ]
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],182:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./aes":176,"./authCipher":177,"./modes":182,"./modes/cbc":183,"./modes/cfb":184,"./modes/cfb1":185,"./modes/cfb8":186,"./modes/ctr":187,"./modes/ecb":188,"./modes/ofb":189,"./streamCipher":192,"buffer":3,"cipher-base":191,"dup":12,"evp_bytestokey":193,"inherits":201}],180:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./aes":176,"./authCipher":177,"./modes":182,"./modes/cbc":183,"./modes/cfb":184,"./modes/cfb1":185,"./modes/cfb8":186,"./modes/ctr":187,"./modes/ecb":188,"./modes/ofb":189,"./streamCipher":192,"buffer":3,"cipher-base":191,"dup":13,"evp_bytestokey":193,"inherits":201}],181:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"buffer":3,"dup":14}],182:[function(require,module,exports){
 arguments[4][15][0].apply(exports,arguments)
 },{"dup":15}],183:[function(require,module,exports){
 arguments[4][16][0].apply(exports,arguments)
 },{"buffer-xor":190,"dup":16}],184:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-exports.encrypt = function (self, data, decrypt) {
-  var out = new Buffer('')
-  var len
-
-  while (data.length) {
-    if (self._cache.length === 0) {
-      self._cache = self._cipher.encryptBlock(self._prev)
-      self._prev = new Buffer('')
-    }
-
-    if (self._cache.length <= data.length) {
-      len = self._cache.length
-      out = Buffer.concat([out, encryptStart(self, data.slice(0, len), decrypt)])
-      data = data.slice(len)
-    } else {
-      out = Buffer.concat([out, encryptStart(self, data, decrypt)])
-      break
-    }
-  }
-
-  return out
-}
-function encryptStart (self, data, decrypt) {
-  var len = data.length
-  var out = xor(data, self._cache)
-  self._cache = self._cache.slice(len)
-  self._prev = Buffer.concat([self._prev, decrypt ? data : out])
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":190}],185:[function(require,module,exports){
-(function (Buffer){
-function encryptByte (self, byteParam, decrypt) {
-  var pad
-  var i = -1
-  var len = 8
-  var out = 0
-  var bit, value
-  while (++i < len) {
-    pad = self._cipher.encryptBlock(self._prev)
-    bit = (byteParam & (1 << (7 - i))) ? 0x80 : 0
-    value = pad[0] ^ bit
-    out += ((value & 0x80) >> (i % 8))
-    self._prev = shiftIn(self._prev, decrypt ? bit : value)
-  }
-  return out
-}
-exports.encrypt = function (self, chunk, decrypt) {
-  var len = chunk.length
-  var out = new Buffer(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = encryptByte(self, chunk[i], decrypt)
-  }
-  return out
-}
-function shiftIn (buffer, value) {
-  var len = buffer.length
-  var i = -1
-  var out = new Buffer(buffer.length)
-  buffer = Buffer.concat([buffer, new Buffer([value])])
-  while (++i < len) {
-    out[i] = buffer[i] << 1 | buffer[i + 1] >> (7)
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],186:[function(require,module,exports){
-(function (Buffer){
-function encryptByte (self, byteParam, decrypt) {
-  var pad = self._cipher.encryptBlock(self._prev)
-  var out = pad[0] ^ byteParam
-  self._prev = Buffer.concat([self._prev.slice(1), new Buffer([decrypt ? byteParam : out])])
-  return out
-}
-exports.encrypt = function (self, chunk, decrypt) {
-  var len = chunk.length
-  var out = new Buffer(len)
-  var i = -1
-  while (++i < len) {
-    out[i] = encryptByte(self, chunk[i], decrypt)
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],187:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-function incr32 (iv) {
-  var len = iv.length
-  var item
-  while (len--) {
-    item = iv.readUInt8(len)
-    if (item === 255) {
-      iv.writeUInt8(0, len)
-    } else {
-      item++
-      iv.writeUInt8(item, len)
-      break
-    }
-  }
-}
-
-function getBlock (self) {
-  var out = self._cipher.encryptBlock(self._prev)
-  incr32(self._prev)
-  return out
-}
-
-exports.encrypt = function (self, chunk) {
-  while (self._cache.length < chunk.length) {
-    self._cache = Buffer.concat([self._cache, getBlock(self)])
-  }
-  var pad = self._cache.slice(0, chunk.length)
-  self._cache = self._cache.slice(chunk.length)
-  return xor(chunk, pad)
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":190}],188:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":190,"dup":17}],185:[function(require,module,exports){
+arguments[4][18][0].apply(exports,arguments)
+},{"buffer":3,"dup":18}],186:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"buffer":3,"dup":19}],187:[function(require,module,exports){
+arguments[4][20][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":190,"dup":20}],188:[function(require,module,exports){
 arguments[4][21][0].apply(exports,arguments)
 },{"dup":21}],189:[function(require,module,exports){
-(function (Buffer){
-var xor = require('buffer-xor')
-
-function getBlock (self) {
-  self._prev = self._cipher.encryptBlock(self._prev)
-  return self._prev
-}
-
-exports.encrypt = function (self, chunk) {
-  while (self._cache.length < chunk.length) {
-    self._cache = Buffer.concat([self._cache, getBlock(self)])
-  }
-
-  var pad = self._cache.slice(0, chunk.length)
-  self._cache = self._cache.slice(chunk.length)
-  return xor(chunk, pad)
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"buffer-xor":190}],190:[function(require,module,exports){
-(function (Buffer){
-module.exports = function xor (a, b) {
-  var length = Math.min(a.length, b.length)
-  var buffer = new Buffer(length)
-
-  for (var i = 0; i < length; ++i) {
-    buffer[i] = a[i] ^ b[i]
-  }
-
-  return buffer
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3}],191:[function(require,module,exports){
-(function (Buffer){
-var Transform = require('stream').Transform
-var inherits = require('inherits')
-var StringDecoder = require('string_decoder').StringDecoder
-module.exports = CipherBase
-inherits(CipherBase, Transform)
-function CipherBase (hashMode) {
-  Transform.call(this)
-  this.hashMode = typeof hashMode === 'string'
-  if (this.hashMode) {
-    this[hashMode] = this._finalOrDigest
-  } else {
-    this.final = this._finalOrDigest
-  }
-  this._decoder = null
-  this._encoding = null
-}
-CipherBase.prototype.update = function (data, inputEnc, outputEnc) {
-  if (typeof data === 'string') {
-    data = new Buffer(data, inputEnc)
-  }
-  var outData = this._update(data)
-  if (this.hashMode) {
-    return this
-  }
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc)
-  }
-  return outData
-}
-
-CipherBase.prototype.setAutoPadding = function () {}
-
-CipherBase.prototype.getAuthTag = function () {
-  throw new Error('trying to get auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAuthTag = function () {
-  throw new Error('trying to set auth tag in unsupported state')
-}
-
-CipherBase.prototype.setAAD = function () {
-  throw new Error('trying to set aad in unsupported state')
-}
-
-CipherBase.prototype._transform = function (data, _, next) {
-  var err
-  try {
-    if (this.hashMode) {
-      this._update(data)
-    } else {
-      this.push(this._update(data))
-    }
-  } catch (e) {
-    err = e
-  } finally {
-    next(err)
-  }
-}
-CipherBase.prototype._flush = function (done) {
-  var err
-  try {
-    this.push(this._final())
-  } catch (e) {
-    err = e
-  } finally {
-    done(err)
-  }
-}
-CipherBase.prototype._finalOrDigest = function (outputEnc) {
-  var outData = this._final() || new Buffer('')
-  if (outputEnc) {
-    outData = this._toString(outData, outputEnc, true)
-  }
-  return outData
-}
-
-CipherBase.prototype._toString = function (value, enc, final) {
-  if (!this._decoder) {
-    this._decoder = new StringDecoder(enc)
-    this._encoding = enc
-  }
-  if (this._encoding !== enc) {
-    throw new Error('can\'t switch encodings')
-  }
-  var out = this._decoder.write(value)
-  if (final) {
-    out += this._decoder.end()
-  }
-  return out
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"inherits":201,"stream":223,"string_decoder":230}],192:[function(require,module,exports){
-(function (Buffer){
-var aes = require('./aes')
-var Transform = require('cipher-base')
-var inherits = require('inherits')
-
-inherits(StreamCipher, Transform)
-module.exports = StreamCipher
-function StreamCipher (mode, key, iv, decrypt) {
-  if (!(this instanceof StreamCipher)) {
-    return new StreamCipher(mode, key, iv)
-  }
-  Transform.call(this)
-  this._cipher = new aes.AES(key)
-  this._prev = new Buffer(iv.length)
-  this._cache = new Buffer('')
-  this._secCache = new Buffer('')
-  this._decrypt = decrypt
-  iv.copy(this._prev)
-  this._mode = mode
-}
-StreamCipher.prototype._update = function (chunk) {
-  return this._mode.encrypt(this, chunk, this._decrypt)
-}
-StreamCipher.prototype._final = function () {
-  this._cipher.scrub()
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"./aes":176,"buffer":3,"cipher-base":191,"inherits":201}],193:[function(require,module,exports){
-(function (Buffer){
-var md5 = require('create-hash/md5')
-module.exports = EVP_BytesToKey
-function EVP_BytesToKey (password, salt, keyLen, ivLen) {
-  if (!Buffer.isBuffer(password)) {
-    password = new Buffer(password, 'binary')
-  }
-  if (salt && !Buffer.isBuffer(salt)) {
-    salt = new Buffer(salt, 'binary')
-  }
-  keyLen = keyLen / 8
-  ivLen = ivLen || 0
-  var ki = 0
-  var ii = 0
-  var key = new Buffer(keyLen)
-  var iv = new Buffer(ivLen)
-  var addmd = 0
-  var md_buf
-  var i
-  var bufs = []
-  while (true) {
-    if (addmd++ > 0) {
-      bufs.push(md_buf)
-    }
-    bufs.push(password)
-    if (salt) {
-      bufs.push(salt)
-    }
-    md_buf = md5(Buffer.concat(bufs))
-    bufs = []
-    i = 0
-    if (keyLen > 0) {
-      while (true) {
-        if (keyLen === 0) {
-          break
-        }
-        if (i === md_buf.length) {
-          break
-        }
-        key[ki++] = md_buf[i]
-        keyLen--
-        i++
-      }
-    }
-    if (ivLen > 0 && i !== md_buf.length) {
-      while (true) {
-        if (ivLen === 0) {
-          break
-        }
-        if (i === md_buf.length) {
-          break
-        }
-        iv[ii++] = md_buf[i]
-        ivLen--
-        i++
-      }
-    }
-    if (keyLen === 0 && ivLen === 0) {
-      break
-    }
-  }
-  for (i = 0; i < md_buf.length; i++) {
-    md_buf[i] = 0
-  }
-  return {
-    key: key,
-    iv: iv
-  }
-}
-
-}).call(this,require("buffer").Buffer)
-
-},{"buffer":3,"create-hash/md5":133}],194:[function(require,module,exports){
+arguments[4][22][0].apply(exports,arguments)
+},{"buffer":3,"buffer-xor":190,"dup":22}],190:[function(require,module,exports){
+arguments[4][23][0].apply(exports,arguments)
+},{"buffer":3,"dup":23}],191:[function(require,module,exports){
+arguments[4][24][0].apply(exports,arguments)
+},{"buffer":3,"dup":24,"inherits":201,"stream":223,"string_decoder":230}],192:[function(require,module,exports){
+arguments[4][25][0].apply(exports,arguments)
+},{"./aes":176,"buffer":3,"cipher-base":191,"dup":25,"inherits":201}],193:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"buffer":3,"create-hash/md5":133,"dup":36}],194:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var mgf = require('./mgf');
@@ -19549,7 +17158,6 @@ function compare(a, b){
   return dif;
 }
 }).call(this,require("buffer").Buffer)
-
 },{"./mgf":154,"./withPublic":196,"./xor":197,"bn.js":155,"browserify-rsa":156,"buffer":3,"create-hash":131,"parse-asn1":160}],195:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
@@ -19648,7 +17256,6 @@ function nonZero(len, crypto) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-
 },{"./mgf":154,"./withPublic":196,"./xor":197,"bn.js":155,"browserify-rsa":156,"buffer":3,"create-hash":131,"parse-asn1":160,"randombytes":198}],196:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
@@ -19662,7 +17269,6 @@ function withPublic(paddedMsg, key) {
 
 module.exports = withPublic;
 }).call(this,require("buffer").Buffer)
-
 },{"bn.js":155,"buffer":3}],197:[function(require,module,exports){
 module.exports = function xor(a, b) {
   var len = a.length;
@@ -19711,7 +17317,6 @@ function randomBytes (size, cb) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-
 },{"_process":205,"buffer":3}],199:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20305,7 +17910,6 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-
 },{"_process":205}],205:[function(require,module,exports){
 // shim for using process in browser
 
@@ -20936,7 +18540,6 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],207:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -22211,7 +19814,6 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-
 },{"./_stream_duplex":211,"_process":205,"buffer":3,"core-util-is":216,"events":199,"inherits":201,"isarray":203,"process-nextick-args":217,"string_decoder/":230,"util":2}],214:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
@@ -23053,7 +20655,6 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../../../insert-module-globals/node_modules/is-buffer/index.js")})
-
 },{"../../../../insert-module-globals/node_modules/is-buffer/index.js":202}],217:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -23078,7 +20679,6 @@ function nextTick(fn) {
 }
 
 }).call(this,require('_process'))
-
 },{"_process":205}],218:[function(require,module,exports){
 (function (global){
 
@@ -23150,7 +20750,6 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],219:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
@@ -23385,7 +20984,6 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./lib/request":226,"builtin-status-codes":228,"url":231,"xtend":237}],225:[function(require,module,exports){
 (function (global){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableByteStream)
@@ -23430,7 +21028,6 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],226:[function(require,module,exports){
 (function (process,global,Buffer){
 // var Base64 = require('Base64')
@@ -23713,7 +21310,6 @@ var unsafeHeaders = [
 ]
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-
 },{"./capability":225,"./response":227,"_process":205,"buffer":3,"inherits":201,"stream":223,"to-arraybuffer":229}],227:[function(require,module,exports){
 (function (process,global,Buffer){
 var capability = require('./capability')
@@ -23890,7 +21486,6 @@ IncomingMessage.prototype._onXHRProgress = function () {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-
 },{"./capability":225,"_process":205,"buffer":3,"inherits":201,"stream":223}],228:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
@@ -25553,7 +23148,6 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./support/isBuffer":233,"_process":205,"inherits":201}],235:[function(require,module,exports){
 var indexOf = require('indexof');
 
@@ -25880,7 +23474,6 @@ request.cookie = function (str) {
 }
 
 }).call(this,require('_process'))
-
 },{"./lib/cookies":239,"./lib/copy":240,"./request":249,"_process":205}],239:[function(require,module,exports){
 var optional = require('./optional')
   , tough = optional('tough-cookie')
@@ -25939,7 +23532,6 @@ function debug () {
 }
 
 }).call(this,require('_process'))
-
 },{"_process":205,"util":234}],242:[function(require,module,exports){
 // Safe toJSON
 module.exports =
@@ -26250,7 +23842,6 @@ mime.charsets = {
 module.exports = mime;
 
 }).call(this,require('_process'),"/node_modules/sails.io.js/node_modules/request/node_modules/mime")
-
 },{"_process":205,"fs":1,"path":204}],247:[function(require,module,exports){
 (function (Buffer){
 //     uuid.js
@@ -26527,7 +24118,6 @@ module.exports = mime;
 })('undefined' !== typeof window ? window : null);
 
 }).call(this,require("buffer").Buffer)
-
 },{"buffer":3,"crypto":7}],248:[function(require,module,exports){
 /**
  * Object#toString() ref for stringify().
@@ -28242,7 +25832,6 @@ Request.prototype.toJSON = toJSON
 module.exports = Request
 
 }).call(this,require('_process'),require("buffer").Buffer)
-
 },{"./lib/cookies":239,"./lib/copy":240,"./lib/debug":241,"./lib/getSafe":242,"./lib/optional":243,"_process":205,"buffer":3,"crypto":7,"forever-agent":244,"http":224,"json-stringify-safe":245,"mime":246,"net":1,"node-uuid":247,"qs":248,"querystring":209,"stream":223,"url":231,"util":234}],250:[function(require,module,exports){
 /**
  * sails.io.js
@@ -30479,7 +28068,6 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"debug":259,"parseuri":290}],256:[function(require,module,exports){
 
 /**
@@ -31999,7 +29587,6 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./transport":265,"./transports":266,"component-emitter":272,"debug":259,"engine.io-parser":274,"indexof":289,"parsejson":284,"parseqs":285,"parseuri":290}],265:[function(require,module,exports){
 /**
  * Module dependencies.
@@ -32214,7 +29801,6 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./polling-jsonp":267,"./polling-xhr":268,"./websocket":270,"xmlhttprequest-ssl":271}],267:[function(require,module,exports){
 (function (global){
 
@@ -32457,7 +30043,6 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./polling":269,"component-inherit":273}],268:[function(require,module,exports){
 (function (global){
 /**
@@ -32874,7 +30459,6 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./polling":269,"component-emitter":272,"component-inherit":273,"debug":259,"xmlhttprequest-ssl":271}],269:[function(require,module,exports){
 /**
  * Module dependencies.
@@ -33411,7 +30995,6 @@ WS.prototype.check = function(){
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"../transport":265,"component-inherit":273,"debug":259,"engine.io-parser":274,"parseqs":285,"ws":2,"yeast":286}],271:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
@@ -34222,7 +31805,6 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./keys":275,"after":276,"arraybuffer.slice":277,"base64-arraybuffer":278,"blob":279,"has-binary":280,"utf8":282}],275:[function(require,module,exports){
 
 /**
@@ -34466,7 +32048,6 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],280:[function(require,module,exports){
 (function (global){
 
@@ -34529,7 +32110,6 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"isarray":281}],281:[function(require,module,exports){
 arguments[4][203][0].apply(exports,arguments)
 },{"dup":203}],282:[function(require,module,exports){
@@ -34780,7 +32360,6 @@ arguments[4][203][0].apply(exports,arguments)
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],283:[function(require,module,exports){
 
 /**
@@ -34835,7 +32414,6 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],285:[function(require,module,exports){
 /**
  * Compiles a querystring
@@ -35008,7 +32586,6 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"isarray":288}],288:[function(require,module,exports){
 arguments[4][203][0].apply(exports,arguments)
 },{"dup":203}],289:[function(require,module,exports){
@@ -35199,7 +32776,6 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{"./is-buffer":293,"isarray":295}],292:[function(require,module,exports){
 
 /**
@@ -35619,7 +33195,6 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],294:[function(require,module,exports){
 arguments[4][272][0].apply(exports,arguments)
 },{"dup":272}],295:[function(require,module,exports){
@@ -36530,7 +34105,6 @@ arguments[4][203][0].apply(exports,arguments)
 }).call(this);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
 },{}],297:[function(require,module,exports){
 module.exports = toArray
 
@@ -36549,25 +34123,11 @@ function toArray(list, index) {
 },{}],298:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var SocketIO = require('socket.io-client');
+var SailsIO = require('sails.io.js');
 
-var _socket = require('socket.io-client');
+var io = SailsIO(SocketIO);
 
-var _socket2 = _interopRequireDefault(_socket);
+module.exports = io;
 
-var _sailsIo = require('sails.io.js');
-
-var _sailsIo2 = _interopRequireDefault(_sailsIo);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var io = (0, _sailsIo2.default)(_socket2.default);
-
-exports.default = io;
-
-},{"sails.io.js":250,"socket.io-client":251}]},{},[298])
-
-
-//# sourceMappingURL=sailsio-cycle-driver.js.map
+},{"sails.io.js":250,"socket.io-client":251}]},{},[298]);
